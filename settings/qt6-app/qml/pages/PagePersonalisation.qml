@@ -29,11 +29,14 @@ Item {
                 width: parent.width
                 spacing: 12
 
+                // Accept rate and time saved come from the engine's in-memory
+                // counters (metrics.json), which reset when fcitx5 restarts —
+                // hence "this session" and no per-day bars for those two.
                 Repeater {
                     model: [
-                        { label: "Words learned",    value: CorpusStats.words.toLocaleString(),   bars: [20, 30, 25, 40, 38, 50, CorpusStats.words > 0 ? 100 : 0] },
-                        { label: "Accept rate · 7d", value: "0%",  bars: [0, 0, 0, 0, 0, 0, 0] },
-                        { label: "Time saved · 7d",  value: "0 s", bars: [0, 0, 0, 0, 0, 0, 0] },
+                        { label: "Words learned",              value: CorpusStats.words.toLocaleString(), bars: CorpusStats.wordsPerDay },
+                        { label: "Accept rate · this session", value: Math.round(Engine.acceptRate * 100) + "%", bars: [] },
+                        { label: "Time saved · this session",  value: root.formatDuration(Engine.secondsSaved), bars: [] },
                     ]
                     delegate: Rectangle {
                         required property var modelData
@@ -63,6 +66,7 @@ Item {
                                 }
                                 Item { width: 6 }
                                 XBars {
+                                    opacity: modelData.bars.length > 0 ? 1 : 0   // keep the slot so labels stay aligned
                                     values: modelData.bars
                                     width: 56; height: 24
                                     anchors.verticalCenter: parent.verticalCenter
@@ -305,6 +309,15 @@ Item {
             Config.userAvoidPhrases = list
             avoidInput.text = ""
         }
+    }
+
+    // Time saved is an estimate: accepted characters at an assumed typing
+    // speed (EngineProbe::kCharsPerSecond).
+    function formatDuration(secs) {
+        const s = Math.round(secs)
+        if (s < 60)   return s + " s"
+        if (s < 3600) return Math.round(s / 60) + " min"
+        return (s / 3600).toFixed(1) + " h"
     }
 
     function exportProfile() {
