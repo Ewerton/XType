@@ -128,3 +128,31 @@ CorpusCounts CorpusStats::count(const QString &corpusPath, const QDateTime &now)
     }
     return c;
 }
+
+int CorpusStats::wipe() {
+    const int removed = wipeFiles(_path);
+    _signature.clear();
+    refresh();
+    return removed;
+}
+
+int CorpusStats::wipeFiles(const QString &corpusPath) {
+    if (corpusPath.isEmpty()) return -1;
+    const QFileInfo fi(corpusPath);
+    // style_profile.json sits next to the corpus (XTypeEngine derives it from
+    // corpus_path's parent directory).
+    QStringList targets = corpusFiles(corpusPath);
+    targets << timestampsPath(corpusPath)
+            << fi.dir().filePath(fi.fileName() + ".tmp")          // pruneOldEntries() scratch files
+            << timestampsPath(corpusPath) + ".tmp"
+            << fi.dir().filePath("style_profile.json");
+
+    int  removed = 0;
+    bool failed  = false;
+    for (const QString &t : targets) {
+        if (!QFileInfo::exists(t)) continue;
+        if (QFile::remove(t)) ++removed;
+        else                  failed = true;
+    }
+    return failed ? -1 : removed;
+}

@@ -83,6 +83,41 @@ TEST_CASE("count: rotated files add to totals but not to day buckets; .tmp is ig
     CHECK(c.wordsPerDay.last() == 3);
 }
 
+TEST_CASE("wipeFiles: removes corpus, rotations, timestamps, scratch files and profile", "[corpus_stats]") {
+    QTemporaryDir tmp; REQUIRE(tmp.isValid());
+    const QStringList learned = {
+        "corpus.txt", "corpus.txt.1", "corpus.txt.tmp",
+        "corpus_timestamps.txt", "corpus_timestamps.txt.tmp", "style_profile.json",
+    };
+    for (const QString &f : learned) writeFile(tmp.filePath(f), "x\n");
+    // Engine state that is not learned text must survive.
+    for (const QString &f : {QString("metrics.json"), QString("fcitx5.log")})
+        writeFile(tmp.filePath(f), "keep\n");
+
+    CHECK(CorpusStats::wipeFiles(tmp.filePath("corpus.txt")) == learned.size());
+    for (const QString &f : learned)
+        CHECK_FALSE(QFile::exists(tmp.filePath(f)));
+    CHECK(QFile::exists(tmp.filePath("metrics.json")));
+    CHECK(QFile::exists(tmp.filePath("fcitx5.log")));
+
+    const auto c = CorpusStats::count(tmp.filePath("corpus.txt"), QDateTime::currentDateTime());
+    CHECK(c.words == 0);
+}
+
+TEST_CASE("wipeFiles: nothing to delete is not an error", "[corpus_stats]") {
+    QTemporaryDir tmp; REQUIRE(tmp.isValid());
+    CHECK(CorpusStats::wipeFiles(tmp.filePath("corpus.txt")) == 0);
+}
+
+TEST_CASE("wipeFiles: reports failure when a file cannot be removed", "[corpus_stats]") {
+    QTemporaryDir tmp; REQUIRE(tmp.isValid());
+    writeFile(tmp.filePath("corpus.txt"), "x\n");
+    QFile dir(tmp.path());
+    REQUIRE(dir.setPermissions(QFile::ReadOwner | QFile::ExeOwner));   // read-only dir
+    CHECK(CorpusStats::wipeFiles(tmp.filePath("corpus.txt")) == -1);
+    dir.setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner);
+}
+
 // ── EngineProbe::parseMetrics ────────────────────────────────────────────────
 
 TEST_CASE("parseMetrics: reads the counters the engine writes", "[engine_probe]") {

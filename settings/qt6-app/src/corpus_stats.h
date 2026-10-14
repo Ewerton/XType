@@ -36,6 +36,12 @@ public:
 
     Q_INVOKABLE void refresh();
 
+    // Deletes everything learned from typing: the corpus, its rotated copies,
+    // the timestamp file and style_profile.json. Returns the number of files
+    // removed, or -1 if any existing file could not be removed.
+    Q_INVOKABLE int wipe();
+    static int wipeFiles(const QString &corpusPath);
+
     // Reads the corpus file plus its rotated siblings (corpus.txt.1, ...) and
     // the engine's per-line timestamp file. `now` anchors the 7-day window.
     static CorpusCounts count(const QString &corpusPath, const QDateTime &now);

@@ -338,13 +338,14 @@ Item {
 
         Rectangle {
             anchors.centerIn: parent
-            width: 320; height: 160
+            width: 320; height: confirmCol.implicitHeight + 40
             radius: Theme.radius.card
             color: Qt.rgba(0.08, 0.06, 0.13, 0.97)
             border.color: Theme.ink12; border.width: 1
 
             Column {
-                anchors { fill: parent; margins: 20 }
+                id: confirmCol
+                anchors { left: parent.left; right: parent.right; top: parent.top; margins: 20 }
                 spacing: 16
 
                 Text {
@@ -355,7 +356,7 @@ Item {
                 }
                 Text {
                     width: parent.width
-                    text: "This removes all learned text. A backup is saved automatically."
+                    text: "This permanently deletes everything XType learned from your typing. The engine stops using it within 5 minutes."
                     font.family: Theme.sansFamily; font.pixelSize: 12
                     color: Theme.ink65; wrapMode: Text.WordWrap
                     renderType: Text.NativeRendering
@@ -368,9 +369,9 @@ Item {
                         variant: "primary"
                         onClicked: {
                             resetConfirm.visible = false
-                            // xtype-corpus wipe --yes is destructive — run and refresh stats
-                            Qt.openUrlExternally("xtype-corpus://wipe")  // no-op placeholder
-                            CorpusStats.refresh()
+                            const removed = CorpusStats.wipe()
+                            StyleProfile.refresh()
+                            wipeText.text = removed < 0 ? "Could not delete some corpus files" : "Corpus wiped"
                             wipeToast.show()
                         }
                     }
