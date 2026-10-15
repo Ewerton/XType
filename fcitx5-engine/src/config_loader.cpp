@@ -125,10 +125,23 @@ XTypeConfig config_loader::load(const std::string& path) {
                 if (auto v = (*at)["num_predict"].value<int64_t>()) ov.num_predict     = (int)*v;
                 if (auto v = (*at)["mode"].value<std::string>())    ov.mode            = *v;
                 if (auto v = (*at)["prompt_addendum"].value<std::string>()) ov.prompt_addendum = *v;
+                if (auto v = (*at)["ghost_style"].value<std::string>())
+                    ov.ghost_style = (*v == "popup") ? GhostStyle::Popup : GhostStyle::Inline;
                 cfg.apps[std::string(key.str())] = ov;
             }
         }
     }
 
     return cfg;
+}
+
+GhostStyle config_loader::ghostStyleFor(const XTypeConfig& cfg, const AppOverride* ov) {
+    return (ov && ov->ghost_style) ? *ov->ghost_style : cfg.ghost.style;
+}
+
+GhostConfig config_loader::ghostSetupConfig(const XTypeConfig& cfg) {
+    GhostConfig g = cfg.ghost;
+    for (const auto& [_, ov] : cfg.apps)
+        if (ov.ghost_style == GhostStyle::Popup) g.style = GhostStyle::Popup;
+    return g;
 }

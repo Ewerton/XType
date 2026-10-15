@@ -64,6 +64,7 @@ struct AppOverride {
     std::optional<int>         num_predict;
     std::optional<std::string> mode;            // Default/Code-aware/Email tone/Casual/Off
     std::optional<std::string> prompt_addendum;
+    std::optional<GhostStyle>  ghost_style;     // overrides [ghost] style for this app
 };
 
 struct GhostConfig {

@@ -59,7 +59,8 @@ class ConfigStore : public QObject {
     Q_PROPERTY(QStringList userAvoidPhrases READ userAvoidPhrases WRITE setUserAvoidPhrases NOTIFY userAvoidPhrasesChanged)
 
     // Apps map: { "program": { "enabled": bool, "model": str, "debounce_ms": int,
-    //                          "num_predict": int, "mode": str, "prompt_addendum": str } }
+    //                          "num_predict": int, "mode": str, "prompt_addendum": str,
+    //                          "ghost_style": "inline"|"popup" } }
     // Missing keys in sub-map → absent optional in AppOverride.
     Q_PROPERTY(QVariantMap apps READ apps WRITE setApps NOTIFY appsChanged)
 

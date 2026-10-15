@@ -144,6 +144,7 @@ void ConfigStore::load() {
             if (auto v = (*overTbl)["num_predict"].value<int64_t>())   entry["num_predict"] = static_cast<int>(*v);
             if (auto v = (*overTbl)["mode"].value<std::string>())       entry["mode"] = QString::fromStdString(*v);
             if (auto v = (*overTbl)["prompt_addendum"].value<std::string>()) entry["prompt_addendum"] = QString::fromStdString(*v);
+            if (auto v = (*overTbl)["ghost_style"].value<std::string>()) entry["ghost_style"] = QString::fromStdString(*v);
             _apps[QString::fromStdString(std::string(prog))] = entry;
         }
     }
@@ -236,6 +237,7 @@ void ConfigStore::writeToml(const QString &path) {
             if (sub.contains("num_predict"))       entry.insert_or_assign("num_predict",       static_cast<int64_t>(sub["num_predict"].toInt()));
             if (sub.contains("mode"))              entry.insert_or_assign("mode",              sub["mode"].toString().toStdString());
             if (sub.contains("prompt_addendum"))   entry.insert_or_assign("prompt_addendum",   sub["prompt_addendum"].toString().toStdString());
+            if (sub.contains("ghost_style"))       entry.insert_or_assign("ghost_style",       sub["ghost_style"].toString().toStdString());
             appsTbl.insert_or_assign(it.key().toStdString(), std::move(entry));
         }
         root.insert_or_assign("apps", std::move(appsTbl));

@@ -3,7 +3,12 @@ import QtQuick.Controls.Basic
 import XType.Settings 1.0
 
 Item {
+    id: page
     anchors.fill: parent
+
+    // Popup options matter when the default style or any app's override is popup.
+    readonly property bool popupInUse: Config.ghostStyle === "popup"
+        || Object.values(Config.apps).some(a => a && a.ghost_style === "popup")
 
     Flickable {
         id: flick
@@ -112,7 +117,7 @@ Item {
                     }
                 }
                 XRow {
-                    visible: Config.ghostStyle === "popup"
+                    visible: page.popupInUse
                     label: "Popup font"
                     desc: "Font of the gray text, e.g. \"Sans 11\". Match your apps' text size."
                     width: parent.width
@@ -124,7 +129,7 @@ Item {
                     }
                 }
                 XRow {
-                    visible: Config.ghostStyle === "popup"
+                    visible: page.popupInUse
                     label: "On the caret line (Hyprland)"
                     desc: "Loads XType's Hyprland plugin to show the popup on the line you type, not below it."
                     width: parent.width

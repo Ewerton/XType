@@ -133,7 +133,8 @@ XTypeEngine::XTypeEngine(fcitx::AddonManager *manager)
     _ghostSetup = std::make_unique<GhostPopupSetup>(
         _instance, path_utils::expandTilde("~/.local/share/xtype").string());
     _ghostSetup->setLogSink([](const std::string &m) { dbg("[ghost] %s", m.c_str()); });
-    _instance->eventDispatcher().schedule([this] { _ghostSetup->apply(_cfg.ghost); });
+    _instance->eventDispatcher().schedule(
+        [this] { _ghostSetup->apply(config_loader::ghostSetupConfig(_cfg)); });
 }
 
 XTypeEngine::~XTypeEngine() {
@@ -170,7 +171,7 @@ void XTypeEngine::reloadConfig() {
 
     applyPrompt();
     _inference.update_config(_cfg.inference);
-    _ghostSetup->apply(_cfg.ghost);
+    _ghostSetup->apply(config_loader::ghostSetupConfig(_cfg));
     dbg("[reload] done");
 }
 
@@ -481,7 +482,8 @@ void XTypeEngine::requestInference(
 
 void XTypeEngine::updatePreedit(fcitx::InputContext *ic) {
     auto &panel = ic->inputPanel();
-    const bool popup = _cfg.ghost.style == GhostStyle::Popup;
+    const bool popup =
+        config_loader::ghostStyleFor(_cfg, currentAppOverride()) == GhostStyle::Popup;
     // Popup style: Fcitx5's UI draws the suggestion at the caret (styled by the
     // Fcitx5 theme), and nothing is placed in the app's own text.
     panel.setAuxUp(popup && _ctx.hasSuggestion() ? fcitx::Text(*_ctx.suggestion())

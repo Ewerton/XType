@@ -167,6 +167,31 @@ TEST_CASE("apps: only present keys survive, absent optionals stay absent", "[con
     CHECK(!kate.contains("num_predict"));
     CHECK(!kate.contains("mode"));
     CHECK(!kate.contains("prompt_addendum"));
+    CHECK(!kate.contains("ghost_style"));
+}
+
+TEST_CASE("apps: per-app ghost_style round-trips and clears with null", "[config_store]") {
+    QTemporaryDir tmp; REQUIRE(tmp.isValid());
+    const QString dst = tmp.filePath("config.toml");
+
+    {
+        ConfigStore cs(dst);
+        cs.load();
+        cs.setApp("omawrite", "ghost_style", "popup");
+        cs.setApp("kate", "ghost_style", "inline");
+        cs.saveNow();
+    }
+    {
+        ConfigStore cs(dst);
+        cs.load();
+        CHECK(cs.apps()["omawrite"].toMap()["ghost_style"].toString() == "popup");
+        CHECK(cs.apps()["kate"].toMap()["ghost_style"].toString() == "inline");
+        cs.setApp("omawrite", "ghost_style", QVariant::fromValue(nullptr));   // QML's null
+        cs.saveNow();
+    }
+    ConfigStore cs(dst);
+    cs.load();
+    CHECK(!cs.apps()["omawrite"].toMap().contains("ghost_style"));
 }
 
 // ------------------------------------------------------------------ 5
