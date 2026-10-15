@@ -6,9 +6,11 @@ Item {
     id: page
     anchors.fill: parent
 
-    // Popup options matter when the default style or any app's override is popup.
+    // Popup / inline options matter when the default style or any app's override uses them.
     readonly property bool popupInUse: Config.ghostStyle === "popup"
         || Object.values(Config.apps).some(a => a && a.ghost_style === "popup")
+    readonly property bool inlineInUse: Config.ghostStyle !== "popup"
+        || Object.values(Config.apps).some(a => a && a.ghost_style === "inline")
 
     Flickable {
         id: flick
@@ -113,6 +115,30 @@ Item {
                             label: "Popup"
                             on: Config.ghostStyle === "popup"
                             onClicked: Config.ghostStyle = "popup"
+                        }
+                    }
+                }
+                XRow {
+                    visible: page.inlineInUse
+                    label: "Inline look"
+                    desc: "Qt apps only; Firefox, Electron and most GTK apps always underline."
+                    width: parent.width
+                    Row {
+                        spacing: 6
+                        Repeater {
+                            model: [
+                                { label: "Underline", value: "underline" },
+                                { label: "Highlight", value: "highlight" },
+                                { label: "Bold",      value: "bold" },
+                                { label: "Italic",    value: "italic" },
+                                { label: "None",      value: "none" },
+                            ]
+                            delegate: XPill {
+                                required property var modelData
+                                label: modelData.label
+                                on: Config.ghostInlineFormat === modelData.value
+                                onClicked: Config.ghostInlineFormat = modelData.value
+                            }
                         }
                     }
                 }

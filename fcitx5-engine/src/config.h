@@ -12,6 +12,11 @@ enum class TriggerMode { Pause, Manual };
 enum class GhostStyle { Inline, Popup };
 
 enum class AcceptKey   { Tab, Enter, Right };
+// How inline suggestions are marked in the app's text. Only apps that talk to
+// Fcitx5 through its Qt or GTK module apply it; native Wayland text-input-v3
+// clients (GTK without the module, Firefox, Electron) carry no styling and
+// draw their own underline whatever is chosen.
+enum class InlineFormat { Underline, Highlight, Bold, Italic, None };
 
 struct InferenceConfig {
     std::string              model             = "qwen2.5:1.5b";
@@ -68,7 +73,8 @@ struct AppOverride {
 };
 
 struct GhostConfig {
-    GhostStyle  style           = GhostStyle::Inline;
+    GhostStyle   style          = GhostStyle::Inline;
+    InlineFormat inline_format  = InlineFormat::Underline;   // Inline style only
     // Popup style only. While it is on, XType switches Fcitx5's classic UI to
     // popup_theme / popup_font and restores the user's own settings after.
     std::string popup_font      = "Sans 11";

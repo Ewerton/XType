@@ -110,6 +110,7 @@ void ConfigStore::load() {
         if (auto v = (*g)["popup_font"].value<std::string>())    _ghostPopupFont      = QString::fromStdString(*v);
         if (auto v = (*g)["popup_theme"].value<std::string>())   _ghostPopupTheme     = QString::fromStdString(*v);
         if (auto v = (*g)["hyprland_inline"].value<bool>())      _ghostHyprlandInline = *v;
+        if (auto v = (*g)["inline_format"].value<std::string>()) _ghostInlineFormat = QString::fromStdString(*v);
     }
 
     // --- [learning] ---
@@ -204,6 +205,7 @@ void ConfigStore::writeToml(const QString &path) {
     ghost.insert_or_assign("popup_font",      _ghostPopupFont.toStdString());
     ghost.insert_or_assign("popup_theme",     _ghostPopupTheme.toStdString());
     ghost.insert_or_assign("hyprland_inline", _ghostHyprlandInline);
+    ghost.insert_or_assign("inline_format", _ghostInlineFormat.toStdString());
     root.insert_or_assign("ghost", std::move(ghost));
 
     // [learning]
@@ -285,6 +287,7 @@ void ConfigStore::resetAll() {
     _ghostPopupFont       = "Sans 11";
     _ghostPopupTheme      = "xtype-ghost";
     _ghostHyprlandInline  = false;
+    _ghostInlineFormat    = "underline";
     _partialAccept        = true;
     _escDismisses         = true;
     _passThroughTerminals = true;
@@ -332,6 +335,7 @@ void ConfigStore::resetAll() {
     emit ghostPopupFontChanged();
     emit ghostPopupThemeChanged();
     emit ghostHyprlandInlineChanged();
+    emit ghostInlineFormatChanged();
     emit partialAcceptChanged();
     emit escDismissesChanged();
     emit passThroughTerminalsChanged();
@@ -379,6 +383,7 @@ void ConfigStore::setGhostStyle(const QString &v)       { CS_SET(ghostStyle,    
 void ConfigStore::setGhostPopupFont(const QString &v)   { CS_SET(ghostPopupFont,        ghostPopupFontChanged); }
 void ConfigStore::setGhostPopupTheme(const QString &v)  { CS_SET(ghostPopupTheme,       ghostPopupThemeChanged); }
 void ConfigStore::setGhostHyprlandInline(bool v)        { CS_SET(ghostHyprlandInline,   ghostHyprlandInlineChanged); }
+void ConfigStore::setGhostInlineFormat(const QString &v){ CS_SET(ghostInlineFormat,     ghostInlineFormatChanged); }
 void ConfigStore::setBlocklistApps(const QStringList &v){ CS_SET(blocklistApps,         blocklistAppsChanged); }
 void ConfigStore::setBlockedPhrases(const QStringList &v){ CS_SET(blockedPhrases,       blockedPhrasesChanged); }
 

@@ -87,6 +87,13 @@ XTypeConfig config_loader::load(const std::string& path) {
         if (auto v = (*t)["popup_font"].value<std::string>())    cfg.ghost.popup_font      = *v;
         if (auto v = (*t)["popup_theme"].value<std::string>())   cfg.ghost.popup_theme     = *v;
         if (auto v = (*t)["hyprland_inline"].value<bool>())      cfg.ghost.hyprland_inline = *v;
+        if (auto v = (*t)["inline_format"].value<std::string>()) {
+            if      (*v == "highlight") cfg.ghost.inline_format = InlineFormat::Highlight;
+            else if (*v == "bold")      cfg.ghost.inline_format = InlineFormat::Bold;
+            else if (*v == "italic")    cfg.ghost.inline_format = InlineFormat::Italic;
+            else if (*v == "none")      cfg.ghost.inline_format = InlineFormat::None;
+            else                        cfg.ghost.inline_format = InlineFormat::Underline;
+        }
     }
 
     // [learning]

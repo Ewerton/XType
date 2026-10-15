@@ -307,3 +307,20 @@ TEST_CASE("[ghost] round-trip and defaults", "[config_store]") {
     CHECK(cs2.ghostPopupTheme()     == "xtype-ghost");
     CHECK(cs2.ghostHyprlandInline() == true);
 }
+
+TEST_CASE("[ghost] inline_format round-trip and default", "[config_store]") {
+    QTemporaryDir tmp; REQUIRE(tmp.isValid());
+    const QString dst = tmp.filePath("config.toml");
+
+    {
+        ConfigStore cs(dst);
+        cs.load();
+        CHECK(cs.ghostInlineFormat() == "underline");
+        cs.setGhostInlineFormat("italic");
+        cs.saveNow();
+    }
+
+    ConfigStore cs2(dst);
+    cs2.load();
+    CHECK(cs2.ghostInlineFormat() == "italic");
+}
