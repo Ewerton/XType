@@ -74,7 +74,9 @@ struct GhostConfig {
     std::string popup_font      = "Sans 11";
     std::string popup_theme     = "xtype-ghost";
     // Popup style on Hyprland only: load the xtype-inline Hyprland plugin,
-    // which moves the popup from below the caret onto the caret's line.
+    // which moves the popup from below the caret onto the caret's line. Only
+    // native Wayland text-input apps are affected (not X11, nor Qt apps using
+    // Fcitx5's Qt module), and Chromium-based apps report a stale caret.
     bool        hyprland_inline = false;
 };
 

@@ -131,7 +131,7 @@ Item {
                 XRow {
                     visible: page.popupInUse
                     label: "On the caret line (Hyprland)"
-                    desc: "Loads XType's Hyprland plugin to show the popup on the line you type, not below it."
+                    desc: "Moves the popup onto the line you type. Not every app: only native Wayland apps that report their caret; not X11, Electron/Chromium or Qt apps using Fcitx5's Qt module."
                     width: parent.width
                     XToggle {
                         on: Config.ghostHyprlandInline
