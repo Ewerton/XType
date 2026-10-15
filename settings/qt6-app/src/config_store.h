@@ -8,7 +8,8 @@
 #include <QVariantMap>
 
 // TOML key names mirror XTypeConfig struct fields exactly (snake_case).
-// Enum strings: TriggerMode → "pause"|"manual"; AcceptKey → "tab"|"enter"|"right".
+// Enum strings: TriggerMode → "pause"|"manual"; AcceptKey → "tab"|"enter"|"right";
+// [ghost] style → "inline"|"popup".
 // std::optional round-trip: absent key ↔ invalid QVariant / empty optional.
 
 class ConfigStore : public QObject {
@@ -23,6 +24,12 @@ class ConfigStore : public QObject {
     Q_PROPERTY(bool        passThroughTerminals READ passThroughTerminals WRITE setPassThroughTerminals NOTIFY passThroughTerminalsChanged)
     Q_PROPERTY(QStringList blocklistApps   READ blocklistApps    WRITE setBlocklistApps    NOTIFY blocklistAppsChanged)
     Q_PROPERTY(QStringList blockedPhrases  READ blockedPhrases   WRITE setBlockedPhrases   NOTIFY blockedPhrasesChanged)
+
+    // Ghost (how suggestions are shown)
+    Q_PROPERTY(QString  ghostStyle          READ ghostStyle          WRITE setGhostStyle          NOTIFY ghostStyleChanged)
+    Q_PROPERTY(QString  ghostPopupFont      READ ghostPopupFont      WRITE setGhostPopupFont      NOTIFY ghostPopupFontChanged)
+    Q_PROPERTY(QString  ghostPopupTheme     READ ghostPopupTheme     WRITE setGhostPopupTheme     NOTIFY ghostPopupThemeChanged)
+    Q_PROPERTY(bool     ghostHyprlandInline READ ghostHyprlandInline WRITE setGhostHyprlandInline NOTIFY ghostHyprlandInlineChanged)
 
     // Inference
     Q_PROPERTY(QString  model           READ model           WRITE setModel           NOTIFY modelChanged)
@@ -73,6 +80,11 @@ public:
     QStringList blocklistApps()          const { return _blocklistApps; }
     QStringList blockedPhrases()         const { return _blockedPhrases; }
 
+    QString     ghostStyle()             const { return _ghostStyle; }
+    QString     ghostPopupFont()         const { return _ghostPopupFont; }
+    QString     ghostPopupTheme()        const { return _ghostPopupTheme; }
+    bool        ghostHyprlandInline()    const { return _ghostHyprlandInline; }
+
     QString     model()                  const { return _model; }
     QString     ollamaHost()             const { return _ollamaHost; }
     int         debounceMs()             const { return _debounceMs; }
@@ -108,6 +120,11 @@ public:
     void setPassThroughTerminals(bool v);
     void setBlocklistApps(const QStringList &v);
     void setBlockedPhrases(const QStringList &v);
+
+    void setGhostStyle(const QString &v);
+    void setGhostPopupFont(const QString &v);
+    void setGhostPopupTheme(const QString &v);
+    void setGhostHyprlandInline(bool v);
 
     void setModel(const QString &v);
     void setOllamaHost(const QString &v);
@@ -151,11 +168,16 @@ signals:
     void engineEnabledChanged();
     void triggerModeChanged();
     void acceptKeyChanged();
+    void ghostStyleChanged();
     void partialAcceptChanged();
     void escDismissesChanged();
     void passThroughTerminalsChanged();
     void blocklistAppsChanged();
     void blockedPhrasesChanged();
+
+    void ghostPopupFontChanged();
+    void ghostPopupThemeChanged();
+    void ghostHyprlandInlineChanged();
 
     void modelChanged();
     void ollamaHostChanged();
@@ -199,6 +221,12 @@ private:
     bool        _passThroughTerminals = true;
     QStringList _blocklistApps;
     QStringList _blockedPhrases;
+
+    // Ghost
+    QString     _ghostStyle           = "inline";
+    QString     _ghostPopupFont       = "Sans 11";
+    QString     _ghostPopupTheme      = "xtype-ghost";
+    bool        _ghostHyprlandInline  = false;
 
     // Inference
     QString     _model            = "qwen2.5:1.5b";

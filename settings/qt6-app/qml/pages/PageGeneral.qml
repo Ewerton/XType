@@ -94,6 +94,46 @@ Item {
                     }
                 }
                 XRow {
+                    label: "Suggestion style"
+                    desc: "Inline: in the app's own text (usually underlined). Popup: gray text drawn by Fcitx5 at the caret."
+                    width: parent.width
+                    Row {
+                        spacing: 6
+                        XPill {
+                            label: "Inline"
+                            on: Config.ghostStyle !== "popup"
+                            onClicked: Config.ghostStyle = "inline"
+                        }
+                        XPill {
+                            label: "Popup"
+                            on: Config.ghostStyle === "popup"
+                            onClicked: Config.ghostStyle = "popup"
+                        }
+                    }
+                }
+                XRow {
+                    visible: Config.ghostStyle === "popup"
+                    label: "Popup font"
+                    desc: "Font of the gray text, e.g. \"Sans 11\". Match your apps' text size."
+                    width: parent.width
+                    XInput {
+                        width: 200
+                        placeholderText: "Sans 11"
+                        text: Config.ghostPopupFont
+                        onEditingFinished: Config.ghostPopupFont = text.trim().length > 0 ? text.trim() : "Sans 11"
+                    }
+                }
+                XRow {
+                    visible: Config.ghostStyle === "popup"
+                    label: "On the caret line (Hyprland)"
+                    desc: "Loads XType's Hyprland plugin to show the popup on the line you type, not below it."
+                    width: parent.width
+                    XToggle {
+                        on: Config.ghostHyprlandInline
+                        onToggled: (v) => Config.ghostHyprlandInline = v
+                    }
+                }
+                XRow {
                     label: "Partial accept (word-by-word)"
                     desc: "Accept one word at a time"
                     width: parent.width

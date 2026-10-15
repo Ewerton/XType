@@ -80,6 +80,15 @@ XTypeConfig config_loader::load(const std::string& path) {
         }
     }
 
+    // [ghost]
+    if (auto* t = tbl["ghost"].as_table()) {
+        if (auto v = (*t)["style"].value<std::string>())
+            cfg.ghost.style = (*v == "popup") ? GhostStyle::Popup : GhostStyle::Inline;
+        if (auto v = (*t)["popup_font"].value<std::string>())    cfg.ghost.popup_font      = *v;
+        if (auto v = (*t)["popup_theme"].value<std::string>())   cfg.ghost.popup_theme     = *v;
+        if (auto v = (*t)["hyprland_inline"].value<bool>())      cfg.ghost.hyprland_inline = *v;
+    }
+
     // [learning]
     if (auto* t = tbl["learning"].as_table()) {
         if (auto v = (*t)["enabled"].value<bool>())                cfg.learning.enabled                    = *v;

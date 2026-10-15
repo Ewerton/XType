@@ -257,3 +257,28 @@ TEST_CASE("resetAll: backup file exists, main file reverts to defaults", "[confi
     CHECK(cs2.model()      == "qwen2.5:1.5b");
     CHECK(cs2.debounceMs() == 220);
 }
+
+TEST_CASE("[ghost] round-trip and defaults", "[config_store]") {
+    QTemporaryDir tmp; REQUIRE(tmp.isValid());
+    const QString dst = tmp.filePath("config.toml");
+
+    {
+        ConfigStore cs(dst);
+        cs.load();
+        CHECK(cs.ghostStyle()          == "inline");
+        CHECK(cs.ghostPopupFont()      == "Sans 11");
+        CHECK(cs.ghostPopupTheme()     == "xtype-ghost");
+        CHECK(cs.ghostHyprlandInline() == false);
+        cs.setGhostStyle("popup");
+        cs.setGhostPopupFont("Inter 13");
+        cs.setGhostHyprlandInline(true);
+        cs.saveNow();
+    }
+
+    ConfigStore cs2(dst);
+    cs2.load();
+    CHECK(cs2.ghostStyle()          == "popup");
+    CHECK(cs2.ghostPopupFont()      == "Inter 13");
+    CHECK(cs2.ghostPopupTheme()     == "xtype-ghost");
+    CHECK(cs2.ghostHyprlandInline() == true);
+}

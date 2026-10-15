@@ -63,3 +63,19 @@ TEST_CASE("malformed TOML returns defaults without crash") {
     CHECK(cfg.inference.model == "qwen2.5:1.5b");
     std::remove(path);
 }
+
+TEST_CASE("ghost: defaults are inline style with the xtype-ghost popup theme") {
+    auto cfg = config_loader::load("tests/fixtures/config_defaults.toml");
+    CHECK(cfg.ghost.style == GhostStyle::Inline);
+    CHECK(cfg.ghost.popup_font == "Sans 11");
+    CHECK(cfg.ghost.popup_theme == "xtype-ghost");
+    CHECK(cfg.ghost.hyprland_inline == false);
+}
+
+TEST_CASE("ghost: [ghost] section is read") {
+    auto cfg = config_loader::load("tests/fixtures/config_ghost.toml");
+    CHECK(cfg.ghost.style == GhostStyle::Popup);
+    CHECK(cfg.ghost.popup_font == "Inter 12");
+    CHECK(cfg.ghost.popup_theme == "my-theme");
+    CHECK(cfg.ghost.hyprland_inline == true);
+}
