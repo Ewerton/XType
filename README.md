@@ -16,6 +16,28 @@ Fcitx5 engine that works in every text field on your desktop.
 
 </div>
 
+> [!NOTE]
+> **This is a fork of [KS0Code/XType](https://github.com/KS0Code/XType)** by Kevin Sugar.
+> It adds the fixes and features below, which are submitted upstream as pull requests
+> and waiting for review. Credit for XType itself goes to the original project.
+>
+> To build this version, clone `https://github.com/Ewerton/XType.git` instead of the
+> URL in [Installation](#4-installation). The steps are otherwise the same.
+>
+> **Fixes**
+> - The × button on phrase rows is clickable ([#1](https://github.com/KS0Code/XType/pull/1))
+> - Real numbers on the Personalisation stat cards, and a working Wipe ([#2](https://github.com/KS0Code/XType/pull/2))
+> - A fresh context starts when Enter is pressed ([#3](https://github.com/KS0Code/XType/pull/3))
+> - Dead-key, Compose and non-ASCII text is recorded correctly ([#4](https://github.com/KS0Code/XType/pull/4))
+> - The sidebar shows the configured model ([#5](https://github.com/KS0Code/XType/pull/5))
+> - Real CPU/RAM numbers in the sidebar, plus GPU and VRAM on NVIDIA ([#10](https://github.com/KS0Code/XType/pull/10))
+>
+> **Features**
+> - Suggestions continue the app's real text, with three prompt bugs fixed ([#6](https://github.com/KS0Code/XType/pull/6))
+> - The Per-app page lists your own apps, not a fixed five ([#7](https://github.com/KS0Code/XType/pull/7))
+> - Gray ghost-text popup suggestions, chosen per app, with a Hyprland caret-line plugin ([#8](https://github.com/KS0Code/XType/pull/8))
+> - Choose how inline suggestions are marked: `[ghost] inline_format` ([#9](https://github.com/KS0Code/XType/pull/9))
+
 ---
 
 ## Table of Contents
